@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "The Honey Barrel",
+    "description": "Compare bottle prices with BAXUS marketplace.",
+    "version": "1.0",
+    "action": {
+        "default_popup": "dist/index.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/content/contentScript.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://services.baxus.co/*"
+    ]
+}
