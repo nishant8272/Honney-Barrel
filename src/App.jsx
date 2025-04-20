@@ -11,12 +11,33 @@ function App() {
 
   // Listen for messages from content script (to auto-fill the fields)
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === 'BOTTLE_INFO') {
-        setTitle(message.payload.title); // Auto-fill the title
-        setUrl(message.payload.url); // Auto-fill the URL
-      }
-    });
+    // Mock data for development environment
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      // Simulate receiving data in development
+      setTitle('Development Test Title');
+      setUrl('https://example.com');
+      return;
+    }
+
+    // Production Chrome extension environment
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+      const messageListener = (message) => {
+        if (message.type === 'BOTTLE_INFO') {
+          setTitle(message.payload.title);
+          setUrl(message.payload.url);
+        }
+      };
+
+      chrome.runtime.onMessage.addListener(messageListener);
+
+      return () => {
+        chrome.runtime.onMessage.removeListener(messageListener);
+      };
+    } else {
+      console.warn('Chrome extension APIs are not available');
+    }
   }, []);
 
   const handleCompare = async () => {
